@@ -1,0 +1,1237 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{charter}   % tipografía
+\usepackage{graphicx}
+\usepackage{makeidx}
+
+\usepackage{float}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{amsfonts}
+\usepackage{sectsty}
+\usepackage{wrapfig}
+\usepackage{listings} % necesario para el resaltado de sintaxis
+\usepackage{caption}
+
+\usepackage{subfig}
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\definecolor{gray}{gray}{0.5}
+\definecolor{light-gray}{gray}{1}
+\definecolor{orange}{rgb}{1,0.5,0}
+
+\lstset{frame=tb,
+  language=JAVA,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  numbers=left,
+  xleftmargin=2em,
+  frame=single,
+  framexleftmargin=2em,
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\small\color{gray} % the style that is used for the line-numbers
+ }
+ 
+ \lstdefinestyle{customc}{
+  backgroundcolor=\color{light-gray},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  numbers=left,
+  xleftmargin=\parindent,
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{blue},
+  commentstyle=\itshape\color{gray},
+  identifierstyle=\color{black},
+  stringstyle=\color{orange},
+}
+
+
+
+\usepackage{hyperref} % agrega hipervínculos en cada entrada del índice
+\hypersetup{          % (en el pdf)
+    colorlinks=true,
+    linktoc=all,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\input{codesnippet}
+\input{page.layout}
+\usepackage{underscore}
+\usepackage{caratula}
+\usepackage{url}
+\usepackage{color}
+\usepackage{clrscode3e} % necesario para el pseudocodigo (estilo Cormen)
+
+
+
+
+\begin{document}
+
+\lstset{
+  language=C++,                    % (cambiar al lenguaje correspondiente)
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{dkgreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mauve},     % string literal style
+}
+
+\thispagestyle{empty}
+\materia{Algoritmos y estructura de datos III}
+\submateria{Segundo Cuatrimestre de 2015}
+\titulo{Trabajo práctico 3}
+\subtitulo{2-List Coloring}
+\integrante{Coy, Camila Paula	}{33/14}{camicoy94@gmail.com} % por cada integrante (apellido, nombre) (n° libreta) (e-mail)
+\integrante{Fadel, Uriel}{104/14}{urielfadel@gmail.com}
+\integrante{Porto, Jorge}{376/11}{cuanto.p.p@gmail.com}
+\integrante{Soliz, Carlos}{406/12}{rcarlos.cs@gmail.com}
+
+\maketitle
+\newpage
+
+\thispagestyle{empty}
+
+\thispagestyle{empty}
+\vspace{1.5cm}
+\tableofcontents
+\newpage
+
+%\normalsize
+
+%\newpage
+\section{Introducción y descripción del problema general.}
+
+En este tp3 vamos a tratar un problema que suele ocurrir en la vida cotidiana de la facultad de ciencias exactas y naturales. Aida es la encargada de la distribución de las aulas para cada materia a dictarse en un cuatrimestre.
+La asignación de las aulas de las aulas se hacen, según los horarios de cada materia y las características del aula que cada docente solicite  como plazas disponibles. Las aulas pueden tener por ejemplo por ejemplo las siguientes características: plazas disponibles, aire acondicionad, luz natural o cercanía con los baños.
+
+Aida enumera las aulas disponibles con un color cada una. En cada cuatrimestre dibuja círculos para cada materia, y una lista de colores para ese círculo  y conecta las materias que se superponen en horario. Después en cada se pone una lista de colores correspondiéndose con las aulas a las que podría asignarse esa materia. \newline
+Por ejemplo : 
+\begin{itemize}
+	\item aulas disponibles (colores disponibles).
+	\begin{itemize}
+		\item  Aire acondicionado $\rightarrow$ 0 , osea aire acondicionado es el color 0,
+		\item  Luz natural $\rightarrow$ 1, osea luz natural es el color 1,
+		\item  Cercano al baño $\rightarrow$ 2, osea carcanía al baño es el color 2.
+	\end{itemize}
+	\item materia que se van a dictar (osea nodos) y horarios.
+	\begin{itemize}
+		\item Análisis II de 13 a 17 hs.
+		\item Probabilidad de 13 a 17 hs.
+		\item Algoritmos III de 17 a 22 hs.
+	\end{itemize}
+\end{itemize}
+Como podemos observar hay intersección de horarios entre análisis II y probabilidad, pero algoritmos tres no se interseca con nadie(ver dibujo abajo).
+
+
+\begin{figure}[H]
+  \begin{center}
+      \includegraphics[scale=0.60]{imagenes/informeImg/GrafoEjemplo1.jpg}
+  \end{center}
+  \caption{Problema modelado sobre grafos}
+\end{figure}
+Y en estos dos gráficos(Ver figura 2)vemos dos posibles soluciones, que por cierto no son las únicas(hay mas).
+\begin{figure}[H]
+  \begin{center}
+      \includegraphics[scale=0.75]{imagenes/informeImg/GrafoSolucion1.jpg}
+  \end{center}
+  \caption{Dos posibles soluciones}
+\end{figure}
+
+Acá abajo describimos las distribución de las aulas por cada materia.
+
+\begin{itemize}
+	\item Solución 1
+	\begin{itemize}
+		\item Álgebra le corresponde el aula 0.
+		\item Probabilidad el aula 1.
+		\item Algoritmos el aula 1.
+	\end{itemize}
+	\item Solución 2
+		\begin{itemize}
+		\item Álgebra le corresponde el aula 1.
+		\item Probabilidad el aula 2.
+		\item Algoritmos el aula 0.
+	\end{itemize}
+\end{itemize}	
+
+%\begin{figure}[htb]
+%  \begin{center}
+%      \includegraphics[scale=0.25]{imagenes/ejemplo.jpg}
+%  \end{center}
+%  \caption{ejemplo}
+%\end{figure}
+
+
+
+Este problema que acabamos de enunciar se conoce formalmente como List Coloring. Dado un grafo $G = (V,E)$, a cada vértice v asignarle un color de la lista de colores disponibles para ese vértice, y pintar los vértices de manera que no haya dos vértices adyacentes del mismo color.
+El ejemplo anterior lo podemos traducir a grafos como el dibujo de abajo(ver dibujo).
+\newline
+
+\textbf{Nota importante:}
+
+De Ahora en mas trataremos a las aulas disponibles como colores y a la materias como nodos. Donde $N = \# Nodos$, $M= \# Aristas$ y $C= \# Colores$ máximos que puede tener un nodo.
+Las aristas representaran la intersección de horarios dos materias diferentes. Cada nodo tendrá una lista de colores no vacía, mas formalmente $(\forall i \in lista) \neg \emptyset	( l) \land 0\leq i \leq c-1 $ 
+ 
+
+
+\section{Algoritmo exacto para 2-List Coloring}
+
+\input{ejercicio1} 
+%%\section{Problema 1}
+
+
+\newpage
+%%\section{Problema 2}
+\section{Algoritmo exacto no polinomial}
+\input{exactoNoPolinomial}
+
+\newpage
+%%\section{Problema 3}
+\section{Heurística constructiva golosa}
+\input{goloso}
+
+\newpage
+%%\section{Problema 4}
+\section{Heurística de búsqueda local}
+\input{busquedaLocal}
+
+\section{Comparación Heurísticas}
+
+Para esta comparación decidimos usar grafos completos.
+
+\begin{figure}[H]
+  \begin{center}
+      \includegraphics[scale=0.75]{../Ejercicio5.jpg}
+  \end{center}
+  \caption{Comparación de tiempo heurísticas para grafos completos}
+  \label{prom}
+\end{figure}
+
+En el gráfico de la figura \ref{prom} podemos observar que las distintas heurísticas no se alejan mucho en su complejidad cuando ejecutan grafos completos. Podemos ver que los gráficos de las tres heurísticas crecen y decrecen en sintonía.
+
+\begin{figure}[H]
+  \begin{center}
+      \includegraphics[scale=0.75]{../Ejercicio5Conflictos.jpg}
+  \end{center}
+  \caption{Comparación de calidad de heurísticas para grafos completos}
+\end{figure}
+
+
+En la figura anterior podemos ver que las tres solucionan con la misma cantidad de conflictos un grafo completo.
+\newpage
+\section{Informe Modificaciones}
+
+\textbf{Ejercicio 1:} Se mejoro la explicación, se completo el calculo de complejidad, se agrego el pseudocódigo, se agrego la experimentación.
+
+\textbf{Ejercicio 2:} Se arreglaron errores sintácticos de la descripción del problema. \newline
+Se agregaron más explicaciones en la sección de desarrollo de la idea de resolución. \newline
+Se agrego en la sección de análisis de complejidad y pseudocódigo las explicaciones del calculo de la complejidad se $Fuerza bruta 1$ y $ Fuerza bruta 2$. \newline
+Se hizo completamente la experimentación. Se modifico el código de $ Ejercicio2.java $ para que la versión sin ninguna poda imprima el resultado del coloreo en el archivo, el cual se encuentra en el arreglo global coloresSinNingunaPoda.
+
+\textbf{Ejercicio 3:} Se agrego el gr\'afico de cantidad de conflictos y se modifico el gr\'afico de N variable para que c sea igual a 10.
+
+\textbf{Ejercicio 4:} Se mejoraron las explicaciones, orden y pies de figuras, se agrego código en el apéndice con el calculo de complejidad. Se explico porque las vecindades son estrictamente distintas.
+
+\textbf{Ejercicio 5:} Se mejoraron los comentarios y pies de figuras.
+\section{Apéndice 1: acerca de los tests}
+
+Como correr el ejercicio3:
+java Ejercicio3 0: es para el caso random
+java Ejercicio3 1: es para el caso que variamos n y mantenemos m y c fijos
+java Ejercicio3 2: es para el caso que variamos c y mantenemos n y m fijos
+java Ejercicio3 3: es para el caso grafo 8-ario cantidad de conflictos
+
+Como correr el ejercicio4:
+java Ejercicio4 0: es para el caso random
+java Ejercicio4 1: es para el caso que variamos n y mantenemos m y c fijos
+java Ejercicio4 2: es para el caso que variamos m y mantemeos n y c fijos
+java Ejercicio4 3: es para el caso que variamos c y mantenemos m y n fijos
+java Ejercicio4 4: es para el caso que comparamos las heuristicas locales y la heuristica golosa
+
+
+Cada vez que corren alguno de estos, sale un archivo Ejercicio3Salida.out los del ejericio3
+y los del ejercicio 4 salen en un archivo Ej4Heu1.out
+
+\newpage
+\section{Apéndice 2: secciones relevantes del código}
+En esta sección, adjuntamos parte del código correspondiente a la resolución de cada problema
+que consideramos más relevante.
+
+\subsection{Código de Ejercicio1}
+
+\begin{lstlisting}
+	public static void cambiarSucesores(NodoP aCamb){//a lo sumo se recorren todos los nodos, costo O(n)
+		aCamb.setValorVerdad(1);
+		for(NodoP sucesor: aCamb.getSucesores()){
+			if(sucesor.getValorVerdad()==0) {
+				noSepuedePintar=true;
+				System.out.println("no se puede pintar");
+				break;
+			}
+			if(sucesor.getValorVerdad()==2){
+				cambiarSucesores(sucesor);
+			}
+		}
+	}
+\end{lstlisting}
+\begin{lstlisting}
+
+	public static boolean noSePuedePintar(Nodo[] nodosGrafo ){
+		// creamos el grafo de prposiciones basado en el grafo original
+
+		NodoP[] grafoProposiciones = new NodoP[4* nodosGrafo.length];
+		
+		for(int i=0;i<grafoProposiciones.length;i++){ // costo O(4n) todo el ciclo
+			grafoProposiciones[i]= new NodoP(i);
+			int nNodoAsociado= i/4;
+			grafoProposiciones[i].setnNodoAsociado(nNodoAsociado);
+			
+			List<Integer> dosColores = nodosGrafo[nNodoAsociado].getColoresPosibles();
+			
+			if(dosColores.size()==2){
+					System.out.println("jj");
+				if(i%4==0){
+					grafoProposiciones[i].setColorAsociado(dosColores.get(0));
+					grafoProposiciones[i].setEsNegacion(false);
+				}else if(i%4==1){
+					grafoProposiciones[i].setColorAsociado(dosColores.get(1));
+					grafoProposiciones[i].setEsNegacion(false);
+				}else if(i%4==2){
+					grafoProposiciones[i].setColorAsociado(dosColores.get(0));
+					grafoProposiciones[i].setEsNegacion(true);
+				}else{
+					grafoProposiciones[i].setColorAsociado(dosColores.get(1));
+					grafoProposiciones[i].setEsNegacion(true);
+				}
+				
+			}else{
+				
+				if(i%4==0){
+					grafoProposiciones[i].setColorAsociado(dosColores.get(0));
+					grafoProposiciones[i].setEsNegacion(false);
+					grafoProposiciones[i].setValorVerdad(1);
+				}else if(i%4==1){
+					grafoProposiciones[i].setVacio();
+				}else if(i%4==2){
+					grafoProposiciones[i].setVacio();
+				}else{
+					grafoProposiciones[i].setVacio();
+				}
+
+			}
+		}
+
+		for(int i=0;i<grafoProposiciones.length;i++){ //costo O(4n)
+			if(i%4==0){
+				if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[i+3].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[i+3]);
+			}else if(i%4==1){
+				if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[i+1].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[i+1]);
+			}else if(i%4==2){
+				if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[i-1].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[i-1]);
+			}else{
+				if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[i-3].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[i-3]);
+			}
+		}
+		
+		//continuamos agregando los sucesores basados en el grafo original
+
+		int numNodo;
+		int colorNodo;
+		List<Nodo> sucesoresOriginal;
+		for(int i=0;i<grafoProposiciones.length;i++){// O(2n min(n,m))
+			if(i%4==0 || i%4==1){
+				numNodo=grafoProposiciones[i].getnNodoAsociado();
+				colorNodo=grafoProposiciones[i].getColorAsociado();
+				sucesoresOriginal=nodosGrafo[numNodo].getSucesores();
+				for(Nodo sucesorOriginal:sucesoresOriginal){//costo O(cantidad sucesores)=O(min(n,m))
+					if(sucesorOriginal.getColoresPosibles().size()==2){
+						if(sucesorOriginal.getColoresPosibles().get(0)==colorNodo){
+							if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[4*sucesorOriginal.getId()+2].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[4*sucesorOriginal.getId()+2]);
+						}
+						if(sucesorOriginal.getColoresPosibles().get(1)==colorNodo){
+							if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[4*sucesorOriginal.getId()+3].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[4*sucesorOriginal.getId()+3]);
+						}
+					}else{
+						if(sucesorOriginal.getColoresPosibles().get(0)==colorNodo){
+							if( !(grafoProposiciones[i].isVacio()) && !( grafoProposiciones[4*sucesorOriginal.getId()+2].isVacio())) grafoProposiciones[i].addSucesor(grafoProposiciones[4*sucesorOriginal.getId()+2]);
+						}
+					}
+				}
+			}
+		}
+	//aplicamos kosaraju
+		
+		List<Stack<NodoP>> componentesFuertementeConexas = componentesFuertementeConexas(grafoProposiciones);
+
+		//nos fijamos si en una misma componente conexa, se encuentra una proposicion y su negacion
+		
+		boolean hayContradiccion=false;
+
+		busquedaContradicion:
+		for(List<NodoP> componente : componentesFuertementeConexas){// 	costo del ciclo peor caso O(suma de los tamanios de componentes al cuadrado). Como cada tamanio al cuadrado esta acotado por la cantidad de nodos,tenemos que en peor caso es O(n^2)
+			for(NodoP nodp : componente){// 	costo del ciclo peor caso O(tamanio(componente)^2)			
+				if(grafoProposiciones[nodp.getId()].isEsNegacion()){
+					for(NodoP inverso: componente){ // costo del ciclo peor caso O(tamanio(componente))
+						if(inverso.getId()==(nodp.getId()-2)){
+							hayContradiccion=true;
+							System.out.println("hay contradiccion\n");
+							break busquedaContradicion;
+						}
+					}
+				}else{
+					for(NodoP inverso: componente){
+						if(inverso.getId()==(nodp.getId()+2)){
+							hayContradiccion=true;
+							System.out.println("hay contradiccion2 "+inverso.getId()+" "+nodp.getId());
+							break busquedaContradicion;
+						}
+					}
+				}
+			}
+		}
+		
+		if (hayContradiccion) return (hayContradiccion);
+
+		
+		System.out.println("se puede pintar");
+		
+		//en caso de que no halla contradiccion, vemos si hay un camino de !c1 a c1, en caso de que lo halla c1 es verdadero
+	
+	for(int i=0;i<grafoProposiciones.length;i++){ //costo O(4n*bfs)= O(n^2 + n*m)
+		
+		if(grafoProposiciones[i].getValorVerdad()==2 && !(grafoProposiciones[i].isVacio())){//todabia no tienen valor de verdad, y no son vacios
+			if(grafoProposiciones[i].isEsNegacion()){// costo en peor caso como todo bfs de O(n+mp), con mp la cantidad de aristas del grafo de proposiciones. Si acotamos la misma por (4n + 4m), tenemos un costo de O(n+m)
+				
+				//aplicamos bfs para saber si estan conectados !c1 -> c1
+				
+				Queue<NodoP> cola= new LinkedList<NodoP>();
+				cola.add(grafoProposiciones[i]);
+				grafoProposiciones[i].marcar();
+				bfs:
+				while(!(cola.isEmpty())){
+					NodoP w=cola.remove();
+					for(NodoP z : w.getSucesores()){//complejidad O(d(w)) (donde d(w) indica la cantidad de sucesores de w)
+						if(z.getId()==i-2){
+							
+							System.out.println("camino desde "+ i + " a "+z.getId());
+							z.setValorVerdad(1);
+							for(int j=0;j<grafoProposiciones.length;j++){
+								grafoProposiciones[j].desMarcar();
+							}
+							break bfs;
+						}	
+						if(!(z.isMarcado())){
+							z.marcar();
+							cola.add(z);
+						}
+					}
+				}
+			}else{
+				//aplicamos bfs para saber si estan conectados c1 -> !c1
+				
+				Queue<NodoP> cola= new LinkedList<NodoP>();
+				cola.add(grafoProposiciones[i]);
+				grafoProposiciones[i].marcar();
+				bfs:
+				while(!(cola.isEmpty())){
+					NodoP w=cola.remove();
+					for(NodoP z : w.getSucesores()){
+						if(z.getId()==i+2){
+							
+							System.out.println("camino desde "+ i + " a "+z.getId());
+							grafoProposiciones[i].setValorVerdad(0);
+							//seteamos en falso tambien los de la misma componente conexa 
+							setearEnfalso:
+							for(Stack<NodoP> componenteConexa : componentesFuertementeConexas){ //costo de buscar el nodo y setear toda la comoponente en falso de O(2n)
+													
+								Iterator<NodoP> itComp= componenteConexa.iterator();
+								while(itComp.hasNext()){
+									NodoP prop=itComp.next();
+									if(prop.getId()==i){
+										//pongo en falso las componentes
+										for(NodoP aSetearEnFalso:componenteConexa){
+											aSetearEnFalso.setValorVerdad(0);
+										}
+										break setearEnfalso;
+									}
+								}	
+							}
+							for(int j=0;j<grafoProposiciones.length;j++){
+								grafoProposiciones[j].desMarcar();
+							}
+							break bfs;
+						}	
+						if(!(z.isMarcado())){
+							z.marcar();
+							cola.add(z);
+						}
+					}
+				} // costo de aplicar bfs en peor caso O(4n+mp), con mp la cantidad de aristas del grafo de proposiciones .Sumado al costo de setear todos los elementos d la misma componente, tenemos O(6n+mp). Si acotamos mp por (4n + 4m), tenemos un costo de O(n+m).
+			}
+		}
+	}
+	//completamos cuatro nodos en caso de tener uno solo
+	
+	for(int i=0;i<grafoProposiciones.length;i++){ //costo O(n)
+		if(!(grafoProposiciones[i].isVacio())){
+			if(i%4==0){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i+1].setValorVerdad(0);
+					grafoProposiciones[i+2].setValorVerdad(0);
+					grafoProposiciones[i+3].setValorVerdad(1);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i+1].setValorVerdad(1);
+					grafoProposiciones[i+2].setValorVerdad(1);
+					grafoProposiciones[i+3].setValorVerdad(0);
+				}
+			}else if(i%4==1){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i+1].setValorVerdad(1);
+					grafoProposiciones[i+2].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-1].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+					grafoProposiciones[i+2].setValorVerdad(1);
+				}
+				
+			}else if(i%4==2){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-2].setValorVerdad(1);
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i+1].setValorVerdad(1);
+				}
+			}else{
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-3].setValorVerdad(1);
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-3].setValorVerdad(0);
+					grafoProposiciones[i-2].setValorVerdad(1);
+					grafoProposiciones[i-1].setValorVerdad(1);
+				}
+			}
+		}
+	}
+	// expandimos los verdaderos
+
+	for(int i=0;i<grafoProposiciones.length;i++){ //para cada indice i, a lo sumo se recorren todos los nodos, tenemos costo O(n^2)
+		if(grafoProposiciones[i].getValorVerdad()==1){
+			for(NodoP succ:grafoProposiciones[i].getSucesores() ){
+				cambiarSucesores(succ); //costo O(n)
+			}
+		}
+	}
+	
+	if(noSepuedePintar) {
+		System.out.println("acaa");
+		return true;
+	}
+	
+	//volvemos a completar los cuatro
+
+	for(int i=0;i<grafoProposiciones.length;i++){ //costo O(n)
+		if(!(grafoProposiciones[i].isVacio())){
+			if(i%4==0){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i+1].setValorVerdad(0);
+					grafoProposiciones[i+2].setValorVerdad(0);
+					grafoProposiciones[i+3].setValorVerdad(1);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i+1].setValorVerdad(1);
+					grafoProposiciones[i+2].setValorVerdad(1);
+					grafoProposiciones[i+3].setValorVerdad(0);
+				}
+			}else if(i%4==1){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i+1].setValorVerdad(1);
+					grafoProposiciones[i+2].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-1].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+					grafoProposiciones[i+2].setValorVerdad(1);
+				}
+				
+			}else if(i%4==2){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-2].setValorVerdad(1);
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i+1].setValorVerdad(1);
+				}
+			}else{
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					grafoProposiciones[i-3].setValorVerdad(1);
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(0);
+				}else if(grafoProposiciones[i].getValorVerdad()==0){
+					grafoProposiciones[i-3].setValorVerdad(0);
+					grafoProposiciones[i-2].setValorVerdad(1);
+					grafoProposiciones[i-1].setValorVerdad(1);
+				}
+			}
+		}
+	}		
+	// en caso de haber con valor 2, los ponemos con algun valor a los 4, y a su vez expandimos los verdaderos
+
+	for(int i=0;i<grafoProposiciones.length;i++){// costo ciclo peor caso O(n^2)
+		if(!(grafoProposiciones[i].isVacio())){
+			if(grafoProposiciones[i].getValorVerdad()==2){
+				if(i%4==0){
+					grafoProposiciones[i].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+					grafoProposiciones[i+2].setValorVerdad(0);
+					grafoProposiciones[i+3].setValorVerdad(1);
+					
+					cambiarSucesores(grafoProposiciones[i]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq jj " + i);
+						System.out.println();
+						for(int j=0;j<grafoProposiciones.length;j++){
+						System.out.println(grafoProposiciones[j].getValorVerdad());
+						}
+						System.out.println();
+						return true;
+					}
+					
+					cambiarSucesores(grafoProposiciones[i+3]); //O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqqooo " + i);
+						return true;
+					}
+				}else if(i%4==1){
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(1);
+					grafoProposiciones[i+2].setValorVerdad(0);
+					cambiarSucesores(grafoProposiciones[i]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+					
+					cambiarSucesores(grafoProposiciones[i+1]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+				}else if(i%4==2){
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(1);
+					grafoProposiciones[i].setValorVerdad(1);
+					grafoProposiciones[i+1].setValorVerdad(0);
+					cambiarSucesores(grafoProposiciones[i]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+					
+					cambiarSucesores(grafoProposiciones[i-1]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+				}else{
+					grafoProposiciones[i-3].setValorVerdad(1);
+					grafoProposiciones[i-2].setValorVerdad(0);
+					grafoProposiciones[i-1].setValorVerdad(0);
+					grafoProposiciones[i].setValorVerdad(1);
+					
+					cambiarSucesores(grafoProposiciones[i]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+					
+					cambiarSucesores(grafoProposiciones[i-3]);//O(n)
+					if(noSepuedePintar) {
+						System.out.println("porqq " + i);
+						return true;
+					}
+				}
+	
+				for(int h=0;h<grafoProposiciones.length;h++){//O(n)
+					if(!(grafoProposiciones[h].isVacio())){
+						if(h%4==0){
+							if(grafoProposiciones[h].getValorVerdad()==1){
+								grafoProposiciones[h+1].setValorVerdad(0);
+								grafoProposiciones[h+2].setValorVerdad(0);
+								grafoProposiciones[h+3].setValorVerdad(1);
+							}else if(grafoProposiciones[h].getValorVerdad()==0){
+								grafoProposiciones[h+1].setValorVerdad(1);
+								grafoProposiciones[h+2].setValorVerdad(1);
+								grafoProposiciones[h+3].setValorVerdad(0);
+							}
+						}else if(h%4==1){
+							if(grafoProposiciones[h].getValorVerdad()==1){
+								grafoProposiciones[h-1].setValorVerdad(0);
+								grafoProposiciones[h+1].setValorVerdad(1);
+								grafoProposiciones[h+2].setValorVerdad(0);
+							}else if(grafoProposiciones[h].getValorVerdad()==0){
+								grafoProposiciones[h-1].setValorVerdad(1);
+								grafoProposiciones[h+1].setValorVerdad(0);
+								grafoProposiciones[h+2].setValorVerdad(1);
+							}
+							
+						}else if(h%4==2){
+							if(grafoProposiciones[h].getValorVerdad()==1){
+								grafoProposiciones[h-2].setValorVerdad(0);
+								grafoProposiciones[h-1].setValorVerdad(1);
+								grafoProposiciones[h+1].setValorVerdad(0);
+							}else if(grafoProposiciones[h].getValorVerdad()==0){
+								grafoProposiciones[h-2].setValorVerdad(1);
+								grafoProposiciones[h-1].setValorVerdad(0);
+								grafoProposiciones[h+1].setValorVerdad(1);
+							}
+						}else{
+							if(grafoProposiciones[h].getValorVerdad()==1){
+								grafoProposiciones[h-3].setValorVerdad(1);
+								grafoProposiciones[h-2].setValorVerdad(0);
+								grafoProposiciones[h-1].setValorVerdad(0);
+							}else if(grafoProposiciones[h].getValorVerdad()==0){
+								grafoProposiciones[h-3].setValorVerdad(0);
+								grafoProposiciones[h-2].setValorVerdad(1);
+								grafoProposiciones[h-1].setValorVerdad(1);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//pintamos los verdaderos del grafo de proposiciones
+	for(int i=0;i<grafoProposiciones.length;i++){ // costo O(n)
+		if(! grafoProposiciones[i].isVacio()){
+			if(i%4==0){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					nodosGrafo[grafoProposiciones[i].getnNodoAsociado()].setColor(grafoProposiciones[i].getColorAsociado());
+				}
+			}
+			if(i%4==1){
+				if(grafoProposiciones[i].getValorVerdad()==1){
+					nodosGrafo[grafoProposiciones[i].getnNodoAsociado()].setColor(grafoProposiciones[i].getColorAsociado());
+				}
+			}
+		}
+	}
+	
+
+	return (hayContradiccion);
+}
+	
+\end{lstlisting}
+
+\begin{lstlisting}
+public static List<Stack<NodoP>> componentesFuertementeConexas(NodoP[] grafo) {
+		    int n = grafo.length;
+		    //marcamos todos los vertices
+		    boolean[] marcados = new boolean[n];
+		    Stack<NodoP> orden = new Stack<NodoP>();
+		    for (int i = 0; i < n; i++)// como todo dfs, se recorren todos los nodos, costo total ciclo sumando cada iteracion O(n+ mp) o O(n + m)
+		      if (!marcados[i])
+		        dfs(grafo, marcados, orden, i);
+
+		    //obtenemos el grafo reverso del original
+		    NodoP[] grafoReverso = new NodoP[n];
+		    for (int i = 0; i < n; i++){// O(n)
+		    	grafoReverso[i] = new NodoP(i);
+		    	grafoReverso[i].setEsNegacion(grafo[i].isEsNegacion());
+		    	if(grafo[i].isVacio()) grafoReverso[i].setVacio();
+		    }
+		    for (int i = 0; i < n; i++)// costo ciclo: suma de los grados, tenemos entonces O(mp), es decir O(n + m)
+		      for (NodoP nodP : grafo[i].getSucesores())//O(grado(nodp)
+		    	  grafoReverso[nodP.getId()].addSucesor(grafo[i]);
+		    
+		    List<Stack<NodoP>> componentes = new ArrayList<>();
+		    Arrays.fill(marcados, false);
+		    
+		    while(!orden.isEmpty()){ //sumando todos los recorridos costo O(n+mp) o O(n + m)
+			    NodoP nn= orden.pop();
+			    if (!marcados[nn.getId()]) {
+			    	Stack<NodoP> componente = new Stack<>();
+			    	dfs(grafoReverso, marcados, componente, nn.getId());
+			        componentes.add(componente);
+			     }
+		    }		   
+		    return componentes;
+		  }
+\end{lstlisting}
+
+\begin{lstlisting}
+		  static void dfs(NodoP[] grafo, boolean[] marcados, Stack<NodoP> res, int u) { // costo  O(n +mp) como todo dfs, se recorren todos los nodos
+		    marcados[u] = true;
+		    for (NodoP nodp : grafo[u].getSucesores())
+		      if (!marcados[nodp.getId()])
+		        dfs(grafo, marcados, res, nodp.getId());
+		    res.push(grafo[u]);
+		  }
+\end{lstlisting}
+
+
+\newpage
+\subsection{Código de algoritmo exacto no polinomial}
+
+\begin{lstlisting}
+public class Ejercicio2 {
+	
+	private static int minimaCantidadConflictos;
+	private static int[] coloresOptimos;
+	private static int[] coloresSinNingunaPoda;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//version de backtraking sin podas
+	public static boolean tieneColoreoAuxSinPodas(Nodo[] nodosGrafo, int numNodo){
+		
+		if (numNodo==nodosGrafo.length){//caso base
+			
+			// retorno true si es una solucion valida
+			
+			for(int i=0;i<nodosGrafo.length;i++){
+				int colorActual=nodosGrafo[i].getColor();
+				for(Nodo sucesor:nodosGrafo[i].getSucesores()){
+					if(sucesor.getColor()==colorActual) return false;
+				}
+			}
+			return true;
+		}
+		
+		//si quedan dos colores por nodo aplico el ejercicio1, caso base
+		
+		/*boolean aplicoEj1=true;
+		for(int i=0;i<nodosGrafo.length;i++){
+			if(nodosGrafo[i].getColoresPosibles().size() != 2){
+				aplicoEj1=false;
+				break;
+			}
+		}
+		if(aplicoEj1){
+			System.out.println("aplicoEj1");
+			return (! Ejercicio1.noSePuedePintar(nodosGrafo));
+		}
+	*/	
+		Nodo nodoActual=nodosGrafo[numNodo]; 
+		for(int color:nodoActual.getColoresPosibles()){
+			
+			nodoActual.setColor(color);	
+			if (tieneColoreoAuxSinPodas(nodosGrafo, numNodo+1)) {// tiene una minima poda que es quedarse con una solucion si ya la encontro
+				return true;			
+			}
+		}
+		// en caso de que ninguno de los colores sirva para ese nodo, retornamos falso
+		return false;
+	}
+	
+		//la version sin podas
+		public static boolean tieneColoreoSinPodas(Nodo[] nodosGrafo){
+			return tieneColoreoAuxSinPodas(nodosGrafo, 0);
+		}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+		//////////////////////////////////////////////////////////////////////////////////
+		//version de backtraking sin ninguna podas
+		public static boolean tieneColoreoAuxSinNingunaPodas(Nodo[] nodosGrafo, int numNodo){
+			
+			if (numNodo==nodosGrafo.length){//caso base
+				
+				// retorno true si es una solucion valida
+				
+				for(int i=0;i<nodosGrafo.length;i++){
+					int colorActual=nodosGrafo[i].getColor();
+					for(Nodo sucesor:nodosGrafo[i].getSucesores()){
+						if(sucesor.getColor()==colorActual) return false;
+					}
+				}
+				for(int i=0;i<coloresSinNingunaPoda.length;i++){
+					coloresSinNingunaPoda[i]=nodosGrafo[i].getColor();
+				}
+				return true;
+			}
+			
+			Nodo nodoActual=nodosGrafo[numNodo];
+		//	System.out.println("nodoActual "+nodoActual.getId());
+			boolean[] sonSolucionesPosible= new boolean[nodoActual.getColoresPosibles().size()];
+			Arrays.fill(sonSolucionesPosible, false);
+			//Iterator<Integer> itColores=nodoActual.getColoresPosibles().iterator();
+			int ind=0;
+			for(int color:nodoActual.getColoresPosibles()){
+			//	System.out.println("color " +color);
+				
+				nodoActual.setColor(color);	
+				if (tieneColoreoAuxSinNingunaPodas(nodosGrafo, numNodo+1)) {
+					sonSolucionesPosible[ind]=true;
+				}else{
+					sonSolucionesPosible[ind]=false;
+				}
+				ind++;
+			}
+			boolean res=sonSolucionesPosible[0];
+			for(int i=1;i<sonSolucionesPosible.length;i++){
+				res= (res || sonSolucionesPosible[i]);
+			}
+		//	System.out.println(res);
+			return res;
+		}
+		
+			//la version sin ninguna podas
+			public static boolean tieneColoreoSinNingunaPodas(Nodo[] nodosGrafo){
+				return tieneColoreoAuxSinNingunaPodas(nodosGrafo, 0);
+			}
+		
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//indica si se puede pintar de ese color,es decir si todos los sucesores tienen otro color(no hay conflictos)
+	public static boolean sePuedePintar(Nodo[] nodosGrafo, int numNodo, int color){
+		for(Nodo sucesor: nodosGrafo[numNodo].getSucesores()){
+			if(sucesor.tieneColor() && (sucesor.getColor()==color)) return false;
+		}
+		return true;
+	}
+	
+	//esta funcion se usara en main con numNodo inicial de 0, pintara los nodos de cierto color
+	public static boolean tieneColoreoAuxPodas(Nodo[] nodosGrafo, int numNodo){
+		
+		if (numNodo==nodosGrafo.length) return true;//caso base
+		
+		//si quedan dos colores por nodo aplico el ejercicio1, caso base
+		
+		boolean aplicoEj1=true;
+		for(int i=0;i<nodosGrafo.length;i++){
+			if(nodosGrafo[i].getColoresPosibles().size() != 2){
+				aplicoEj1=false;
+				break;
+			}
+		}
+		if(aplicoEj1){
+			System.out.println("aplicoEj1");
+			return (! Ejercicio1.noSePuedePintar(nodosGrafo));
+		}
+													
+		Nodo nodoActual=nodosGrafo[numNodo];
+		// Creo un i iterador para la lista de coleres actual del nodo 
+		Iterator<Integer> it = nodoActual.getColoresPosibles().iterator();
+		while(it.hasNext()){
+			Integer color= it.next();
+			if(sePuedePintar(nodosGrafo, numNodo, color)){
+				nodoActual.setColor(color);	
+				//nodoActual.removeColor(color);
+				it.remove();
+				if (tieneColoreoAuxPodas(nodosGrafo, numNodo+1)) {
+					nodoActual.restaurarColoresPosibles();   //NOSE SI VA, POR LAS DUADAS SI
+					return true;			
+				}
+			}
+		
+		}
+	/*	for(Integer color:nodoActual.getColoresPosibles()){
+			
+			if(sePuedePintar(nodosGrafo, numNodo, color)){
+				nodoActual.setColor(color);	
+				//nodoActual.removeColor(color);
+				(nodoActual.getColoresPosibles()).remove(color);
+				if (tieneColoreoAuxPodas(nodosGrafo, numNodo+1)) {
+					nodoActual.restaurarColoresPosibles();   //NOSE SI VA, POR LAS DUADAS SI
+					return true;			
+				}
+			}
+		}
+	*/	
+		// en caso de que ninguno de los colores sirva para ese nodo, retornamos falso
+		nodoActual.restaurarColoresPosibles();
+		return false;
+	}
+	
+	//la version con podas
+	public static boolean tieneColoreoPodas(Nodo[] nodosGrafo){
+		return tieneColoreoAuxPodas(nodosGrafo, 0);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public static int calcularCantidadConflictos(Nodo[] nodosGrafo){
+		int cantConflictos=0;
+		for(int i=0;i< nodosGrafo.length;i++){
+			int colorActual=nodosGrafo[i].getColor();
+			for(Nodo sucesores: nodosGrafo[i].getSucesores()){
+				if(sucesores.tieneColor() && sucesores.getColor()==colorActual) cantConflictos++;
+			}
+		}
+		return (cantConflictos/2);
+	}
+	
+	public static void cantidadConflictosOptimaAux(Nodo[] nodosGrafo, int numNodo){
+		if (numNodo==nodosGrafo.length){
+			int cantConflic=calcularCantidadConflictos(nodosGrafo);
+			if(cantConflic<minimaCantidadConflictos){
+				minimaCantidadConflictos=cantConflic;
+				for(int i=0;i<nodosGrafo.length;i++){
+					coloresOptimos[i]=nodosGrafo[i].getColor();
+				}
+			}
+			return;
+		}
+		for(int color:nodosGrafo[numNodo].getColoresPosibles()){
+			nodosGrafo[numNodo].setColor(color);
+			cantidadConflictosOptimaAux(nodosGrafo,numNodo+1);
+		}
+	}
+	
+	public static void cantidadConflictosOptima(Nodo[] nodosGrafo){
+		cantidadConflictosOptimaAux(nodosGrafo, 0);
+	}
+	
+	//las version con cantidad de conflictos optima
+	public static boolean tieneColoreoCantidadConflictosOptima(Nodo[] nodosGrafo){
+		cantidadConflictosOptimaAux(nodosGrafo, 0);
+		return (minimaCantidadConflictos==0);
+	}
+\end{lstlisting}
+
+\newpage
+\subsection{Código de Heurística constructiva golosa}
+
+\begin{lstlisting}
+public static void heuristicaGolosa(Nodo[] nodosGrafo){
+		
+for(int i=0;i<nodosGrafo.length;i++){ // O(n)
+	List<Integer> coloresPosibles= nodosGrafo[i].getColoresPosibles(); // O(n)
+	int cantidadMinimaConflictos = Integer.MAX_VALUE; // O(n)
+	int cantidadMinimaConflictosPosibles = Integer.MAX_VALUE; // O(n)
+	int cantidadVecinosMismoColor; // O(n)
+	int colorResultanteParai = coloresPosibles.get(0); // O(n)
+	for(int color: coloresPosibles){ // O(n*c)
+		cantidadVecinosMismoColor = 0; // O(n*c)
+		for(Nodo sucesor: nodosGrafo[i].getSucesores()){ // O(n^2*c)	
+			if(sucesor.tieneColor() && sucesor.getColor()==color) cantidadVecinosMismoColor++; // O(n^2*c)
+		}
+		if(cantidadVecinosMismoColor<cantidadMinimaConflictos){ // O(n*c)
+			cantidadMinimaConflictos=cantidadVecinosMismoColor; // O(n*c)
+			colorResultanteParai=color; // O(n*c)
+			cantidadMinimaConflictosPosibles=0; // O(n*c)
+			for(Nodo sucesor: nodosGrafo[i].getSucesores() ){ // O(n^2*c)
+				if( (! sucesor.tieneColor()) && sucesor.getColoresPosibles().contains(new Integer(color))) cantidadMinimaConflictosPosibles++; // O(n^2*c^2)
+			}	
+		}else if(cantidadVecinosMismoColor==cantidadMinimaConflictos){ // O(n*c)
+			int cantidadConflictosPosiblesColor=0; // O(n*c)
+			for(Nodo sucesor: nodosGrafo[i].getSucesores() ){ // O(n^2*c)
+				if( (! sucesor.tieneColor()) && sucesor.getColoresPosibles().contains(new Integer(color))) cantidadConflictosPosiblesColor++; // O(n^2*c^2)
+			}
+			if(cantidadConflictosPosiblesColor<cantidadMinimaConflictosPosibles){ // O(n*c)
+				cantidadMinimaConflictosPosibles=cantidadConflictosPosiblesColor; // O(n*c)
+				colorResultanteParai=color; // O(n*c)
+			}
+		}
+	}
+	nodosGrafo[i].setColor(colorResultanteParai); // O(n)
+}
+// O(n^2*c^2)
+\end{lstlisting}
+
+\newpage
+\subsection{Heurística de búsqueda local}
+
+\begin{lstlisting}
+public class Ejercicio4 {
+	
+	public static void mejorarSiPosible(Nodo[] nodosGrafo,int conflictosInicial ){
+		boolean huboMejora=false;
+		int conflictosDiferencia=Integer.MAX_VALUE;
+		
+		busqueda:
+		for(int i=0;i<nodosGrafo.length;i++){  // Se hace n veces * O(c) * O(n) => n*c*n 
+			int colorOriginalNodo= nodosGrafo[i].getColor(); // O(1)
+			for(int color : nodosGrafo[i].getColoresPosibles()){ // Se hace coloresPosibles veces * O(n) => n*c
+				conflictosDiferencia = calcularCantidadConflictos(nodosGrafo,i,color); // O(n) 
+				if(conflictosDiferencia > 0){
+					//Entonces, el color "nuevo" genera menos conflictos, entonces debo cambiarlo!!
+					conflictosInicial = conflictosInicial - conflictosDiferencia; // Le saco la diferencia de conflictos, que tenia el anterior
+																				  // color, con el nuevo!! Es la forma de actualizar la cantidad
+																				  // de conflictos totales, sin tener que volver a calcularlo.
+					huboMejora = true;
+					nodosGrafo[i].setColor(color); // O(1)
+				}
+			}
+			if(huboMejora){
+				break busqueda;
+			}
+		}
+		if(huboMejora){ // O(1)
+			mejorarSiPosible(nodosGrafo,conflictosInicial );
+		}
+		/* Entonces complejidad total, es de O(1) + O(n*c*n) del algoritmo, pero es recursivo,
+		 * y como mucho se va a llamar conflictoInicial veces, suponiendo que cada vez que corre el algoritmo se arregla 1 solo conflicto, 
+		 * entonces la complejidad total del algoritmo es O(m*n*n*c) ya que conflictoInicial se puede
+		 * acotar por m, ya que como mucho, un nodo esta conectado con todos los otros nodos, y tiene un conflicto con cada uno */
+		return;
+		
+	}
+	
+	
+	
+
+	public static void heuristicaBusquedaLocal1(Nodo[] nodosGrafo){
+		//primero coloreamos aleatoriamente 
+		List<Integer> coloresPosibles;
+		Random aleatorio=new Random(5);// las semmilla esta fijada en 5, se puede cambiar, para obtener otra aleatoriedad
+		int numColorAPintar;
+		int colorAPintar;
+		for(int i=0;i<nodosGrafo.length;i++){ // Se corre n veces,* O(1) => O(n)
+			coloresPosibles=nodosGrafo[i].getColoresPosibles(); //O(1)
+			numColorAPintar=aleatorio.nextInt(coloresPosibles.size()); // O(1)
+			colorAPintar=coloresPosibles.get(numColorAPintar); //O(1)
+			nodosGrafo[i].setColor(colorAPintar); //O (1)
+		}
+		
+		//elegimos una solucion vecina con menor f que el actual
+		
+		int conflictosInicial=Ejercicio2.calcularCantidadConflictos(nodosGrafo); //O(n*n)
+		mejorarSiPosible(nodosGrafo,conflictosInicial); //O(m*n*n*c)
+		/* Entonces la complejidad total del algoritmo es, O(m*n*n*c) ya que 
+		 * O(n)<= O(n*n) <=O(m*n*n*c) con m > 0 && c >0, que son necesarios sino no habria ningun coloreo posible.*/
+		
+	}
+////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public static void heuristicaBusquedaLocal2(Nodo[] nodosGrafo){
+		
+		//nuevamente primero se pinta en forma aleatoria, una tecnica GRAPS, es pintarlo primero con heuristica golosa, y despues aplicar la local
+		//primero coloreamos aleatoriamente 
+		List<Integer> coloresPosibles;
+		Random aleatorio=new Random(5);// las semmilla esta fijada en 5, se puede cambiar, para obtener otra aleatoriedad
+		int numColorAPintar;
+		int colorAPintar;
+		for(int i=0;i<nodosGrafo.length;i++){ // Se corre n veces * O(1) =>  O(n)
+			coloresPosibles=nodosGrafo[i].getColoresPosibles(); //O(1)
+			numColorAPintar=aleatorio.nextInt(coloresPosibles.size()); // O(1)
+ 			colorAPintar=coloresPosibles.get(numColorAPintar); // O(1)
+			nodosGrafo[i].setColor(colorAPintar); // O(1)
+		}
+		
+		int conflictosInicial=Ejercicio2.calcularCantidadConflictos(nodosGrafo);//O(n*n)
+		mejorarSiPosible2(nodosGrafo,conflictosInicial); //O()
+		
+		
+	}
+	
+	public static int calcularCantidadConflictos(Nodo[] nodosGrafo, int i, int color){
+		int cantConflictosOriginal = 0,cantConflictosColor=0;//O(1)
+		for(Nodo sucesores: nodosGrafo[i].getSucesores()){ // se corre n veces como mucho, => O(n)* O(1) => O(n)
+			if(sucesores.tieneColor() && sucesores.getColor() ==nodosGrafo[i].getColor()) cantConflictosOriginal++; //O(1)
+			if(sucesores.tieneColor() && sucesores.getColor() == color) cantConflictosColor++; //O(1)
+		}
+		return cantConflictosOriginal - cantConflictosColor;	// Si esto es positivo, quiere decir que el color "nuevo" tiene menos conflictos
+																// Entonces, vamos a devolver esta diferencia, y vamos a cambiar el color.
+		// La complejidad del algoritmo es O(n)
+	}
+	
+	public static void mejorarSiPosible2(Nodo[] nodosGrafo,int conflictosInicial ){
+		boolean huboMejora=false;
+		int cantConflic=Integer.MAX_VALUE;
+		
+		//tomamos LOS vecinos con mayor cantidad de vecinos del mismo color
+		
+		Set<Nodo> nodosMayorCantidadConflictos= new HashSet<>();
+		
+		nodosMayorCantidadConflictos.add(nodosGrafo[0]);
+		
+		int cantidadVecinosMismoColor=0;
+		int colorActual= nodosGrafo[0].getColor();
+		for(Nodo sucesor: nodosGrafo[0].getSucesores()){ // Esto se hace n veces como mucho, que seria cuando el nodo esta conectado con todos los nodos
+			if(sucesor.getColor()==colorActual) cantidadVecinosMismoColor++; // O(1)
+		}
+		
+		int mayorCantidadVecinosConflictos=cantidadVecinosMismoColor;
+	
+		for(int i=1;i<nodosGrafo.length;i++){ // Esto se hace como mucho n veces * O(n) => O(n*n)
+			cantidadVecinosMismoColor=0;
+			colorActual= nodosGrafo[i].getColor();
+			for(Nodo sucesor: nodosGrafo[i].getSucesores()){ //Esto se hace como mucho n veces (acotado como antes, como mucho esta conectado con todos) *O(1) => O(n)
+				if(sucesor.tieneColor() && sucesor.getColor()==colorActual) cantidadVecinosMismoColor++;
+			}
+			
+			if(cantidadVecinosMismoColor == mayorCantidadVecinosConflictos){ // O(1)
+				nodosMayorCantidadConflictos.add(nodosGrafo[i]);// O(1)
+			}else if(cantidadVecinosMismoColor > mayorCantidadVecinosConflictos){// O(1)
+				mayorCantidadVecinosConflictos=cantidadVecinosMismoColor;// O(1)
+				nodosMayorCantidadConflictos.clear();// O(1)
+				nodosMayorCantidadConflictos.add(nodosGrafo[i]);// O(1)
+			}	
+		}
+		
+		//Hasta aca, la complejidad del algoritmo es de n*n!! COMPLEJIDAD!
+		
+		//una vez que  tenemos LOs nodos con mayor cantidad de conflictos, los vecinos son los posibles intercambios de un color en alguno de estos
+		
+		//buscamos una solucion mejor que la q tenemos, nos quedamos con la primera q encontramos(la otra heuristica1 tambien)
+		
+		//osea buscamos un coloreo con la menor cantidad de conflictos
+		
+		busqueda:
+		for(Nodo nodoActual: nodosMayorCantidadConflictos){ //Esto se hace como mucho n veces, que seria si el grafo es completo, 
+															//y todos los nodos contienen el mismo color, o la misma cantidad de conflictos 
+															//* n* O(n*c) => O(n*n*c)
+			for(int color : nodoActual.getColoresPosibles()){ // Se hace coloresPosibles veces * O(n) => n*c
+				int conflictosDiferencia = calcularCantidadConflictos(nodosGrafo,nodoActual.getId(),color); // O(n) 
+				if(conflictosDiferencia > 0){
+					//Entonces, el color "nuevo" genera menos conflictos, entonces debo cambiarlo!!
+					conflictosInicial = conflictosInicial - conflictosDiferencia; // Le saco la diferencia de conflictos, que tenia el anterior
+																				  // color, con el nuevo!! Es la forma de actualizar la cantidad
+																				  // de conflictos totales, sin tener que volver a calcularlo.
+					huboMejora = true;
+					nodoActual.setColor(color); // O(1)
+				}
+			}
+			if(huboMejora){
+				break;
+			}
+		}
+
+		if(huboMejora){// O(1)
+			mejorarSiPosible2(nodosGrafo,conflictosInicial );
+		}
+		/* Entonces el calculo de complejidad total del algoritmo es de m* (O(n*n*c + n*n)) 
+		 * => O(m*n*n*c) */
+		return;
+		
+	}
+
+\end{lstlisting}
+
+\vspace*{0.5cm}
+
+\end{document}

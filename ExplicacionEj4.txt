@@ -1,0 +1,63 @@
+Explicacion del algoritmo, de heuristica local:
+
+Tenemos dos vecindades posibles, la primera es, dado un grafo, voy a ir recorriendo nodo a nodo, buscando si posee, algun color que nos beneficie
+en la cantidad de conflictos totales. En el caso de encontrarlo, cortara el seguimiento, y se volvera a llamar recursivamente, hasta no encontrar
+algun color que genere menos conflictos totales. Si ningun nodo contiene algun color que genere menor cantidad de conflictos totales, entonces 
+el programa termina, llegando a un minimo local.
+La segunda vecindad, es ordenar a los nodos, por cantidad de conflictos que generan, ya que es mas probable que al cambiarles el color, puedan
+llegar a mejorar bastante la cantidad de conflictos generados. Y luego intentara buscar algun color que nos beneficie, buscando sobre los nodos
+que generan mas conflictos.
+
+Pero antes de llamar, al algoritmo de cada una de estas vecindades, cuando nos dan un grafo inicial, cada nodo con sus sucesores, y 
+con sus colores posibles, asignamos un color random, sobre los que tiene, y luego llamaremos a la funcion de heuristicaLocal, para alguna
+de las dos vecindades.
+
+PseudoCodigo:
+
+Heuristica 2:
+
+nodosConflictos = buscoLosNodosQueMasConflictosGeneran(grafo) 	// -> nodosConflictos, son los todos los nodos que tienen la mayor cantidad
+																// -> de conflictos,y luego iterare por estos, en busqueda de una cantidad 
+																// -> menor de conflictos totales.
+																// -> La complejidad de este ordenamiento es n cuadrado, esta explicado mejor en el codigo
+for Nodo nodoActual in nodosMayorCantidadConflictos do //Esto se hace como mucho n veces * O(c*n*n)
+	for int color in nodoActual.getColoresPosibles() do  // Esto se hace como mucho, cantColores(c) veces * O(n) => O(c*n)
+		conflictosDiferencia = calcularCantidadConflictos(nodosGrafo,i,color) // O(n) 
+		if conflictosDiferencia > 0 do
+			//Entonces, el color "nuevo" genera menos conflictos, entonces debo cambiarlo!!
+			conflictosInicial = conflictosInicial - conflictosDiferencia // Le saco la diferencia de conflictos, que tenia el anterior
+																		  // color, con el nuevo!! Es la forma de actualizar la cantidad
+																		  // de conflictos totales, sin tener que volver a calcularlo.
+			huboMejora = true
+			nodosGrafo[i].setColor(color) // O(1)
+		end if
+	end for 
+	if huboMejora do
+		break busqueda
+	end if
+end for 
+
+if huboMejora do // O(1)
+	mejorarSiPosible2(nodosGrafo,conflictosInicial) //Me llamo recursivamente!! 
+end if
+
+Un paso a paso mas detallado seria: primero vamos a recorrer nodo a nodo(linea 23), fijandonos si contiene algun color que reduzca la cantidad
+de conflictos(linea 25) si lo encontramos, entonces nos guardamos la cantidad de conflictos que generan, avisamos que hubo una mejora(linea 28)
+y luego cortamos la circulacion del programa para lanzarlo denuevo, asi buscamos nuevamente los nodos que mas conflictos generan.(linea 41)
+
+
+La funcion calcularCantidadConflictos(pseudo):
+
+int cantConflictosOriginal = 0,cantConflictosColor=0 //O(1)
+for sucesor in  nodosGrafo[i].getSucesores() do  // se corre n veces como mucho, => O(n)* O(1) => O(n)
+	if sucesores.tieneColor() && sucesores.getColor() == colorActual do // O(1)
+		cantConflictosOriginal++ //O(1)
+	end if
+	if sucesores.tieneColor() && sucesores.getColor() == color do //O(1)
+		cantConflictosColor++  //O(1)
+	end if
+end for 
+return cantConflictosOriginal - cantConflictosColor;	// Si esto es positivo, quiere decir que el color "nuevo" tiene menos conflictos
+														// Entonces, vamos a devolver esta diferencia, y vamos a cambiar el color.
+// La complejidad del algoritmo es O(n)
+	

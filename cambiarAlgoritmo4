@@ -1,0 +1,14 @@
+
+
+public static bool calcularCantidadConflictos(Nodo[] nodosGrafo, int i, int color){
+	int cantConflictosOriginal = 0,cantConflictosColor=0;
+	for(Nodo sucesores: nodosGrafo[i].getSucesores()){
+		if(sucesores.tieneColor() && sucesores.getColor() == colorActual) cantConflictosOriginal++;
+		if(sucesores.tieneColor() && sucesores.getColor() == color) cantConflictosColor++;
+	}
+	if(cantConflictosColor < cantConflictosOriginal){
+		return true;
+	}else{
+		return false;
+	}
+}

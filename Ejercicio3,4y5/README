@@ -1,0 +1,17 @@
+Readme:
+
+Como correr el ejercicio3:
+java Ejercicio3 0: es para el caso random
+java Ejercicio3 1: es para el caso que variamos n y mantenemos m y c fijos
+java Ejercicio3 2: es para el caso que variamos c y mantenemos n y m fijos
+
+Como correr el ejercicio4:
+java Ejercicio4 0: es para el caso random
+java Ejercicio4 1: es para el caso que variamos n y mantenemos m y c fijos
+java Ejercicio4 2: es para el caso que variamos m y mantemeos n y c fijos
+java Ejercicio4 3: es para el caso que variamos c y mantenemos m y n fijos
+java Ejercicio4 4: es para el caso que comparamos las heuristicas locales y la heuristica golosa
+
+
+Cada vez que corren alguno de estos, sale un archivo Ejercicio3Salida.out los del ejericio3
+y los del ejercicio 4 salen en un archivo Ej4Heu1.out

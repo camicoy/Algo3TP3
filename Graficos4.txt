@@ -1,0 +1,17 @@
+En el grafico de m variable, del ejercicio 4, se puede ver claramente que la segunda heuristica es mas rapida, pero que generalmente, tiene una
+cantidad de conflictos mas grande. Se puede ver en el grafico de m variable conflictos, a lo que suponemos que es porque al resolver 
+por mayor cantidad de conflictos que genera un nodo, al cambiarle el color es mas probable que haya una menor cantidad de conflictos. Y al 
+cambiarlo e ir arreglando de a muchos conflictos, corre menos iteraciones del algoritmo, pero se estanca en un minimo local mas grande.
+
+En este grafico (caso promedio), se puede ver bien que la heuristica numero 1 , es mas lenta que la segunda, pero sin embargo viendo el grafico
+de caso promedio conflictos, se puede ver que es mas optimo, ya que tiene una menor cantidad de conflictos. 
+
+
+Grafo c variable, muestra que esta acotado por la complejidad de m*n^2*c, y vuelve a mostrar que la heuristica 1, es mas lenta que la 
+heuristica 2. Y el grafico de conflictos de c, sigue corroborando, que la heuristica 2 se estanca en un minimo local mas grande,
+generando mas conflictos.
+
+El grafico de N variable, muestra que el tiempo que tarda en correr el algoritmo de ambas heuristicas esta acotado por la complejidad
+que es m*n^2*c, y que ambas tardan tiempos parecidos, pero suponemos que es porque al hacer crecer n, y mantener a m = 2n y c=n/2
+la cantidad de colores es constante, pero m termina siendo bastante chica de lo que podria ser, haciendo que el grafo tenga pocas
+aristas comparado con las que podria tener, que son n*(n-1)/2.
